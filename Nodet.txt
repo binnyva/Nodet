@@ -1,0 +1,13 @@
+Node
+	id
+	title
+	parent_node_id
+	sort_order
+	status
+
+Setting
+	id
+	node_id
+	name
+	value
+	data
