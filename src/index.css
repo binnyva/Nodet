@@ -11,3 +11,11 @@ ul {
 input {
 	border:0;
 }
+#content {
+	margin-top:100px;
+}
+
+.open-status {
+	float:left;
+	margin-left: -15px;
+}
