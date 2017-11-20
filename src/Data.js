@@ -18,18 +18,15 @@ var Data = {
 	},
 
 	addSiblingAfter(id) {
-		var node = this.findNode(this.data, id);
+		var node_path = this.findNode(this.data, id);
 		var parent = this.getParentNode(id);
 
-		var node_index = node[node.length - 1];
+		var node_index = Number(node_path[node_path.length - 1]);
 
-		var new_array = parent.children.slice(0, node_index + 1); // Copy all children till the current one.
 		var new_id = this.getUniqueId();
-		new_array.push({"id": new_id, "title": ""}); // Add a new node 
-		if(parent.children.length >= node_index + 1) // Copy over the rest - if any.
-			new_array = new_array.concat(parent.children.slice(node_index + 1));
+		var new_node = {"id": new_id, "title": ""}; // Add a new node 
 
-		parent['children'] = new_array;
+		parent.children.splice(node_index + 1, 0, new_node);
 
 		return new_id;
 	},
@@ -56,22 +53,16 @@ var Data = {
 		var node_index = Number(node_path[node_path.length - 1]); // Index of the current node.
 		if(node_index === 0) return 0; // Only elements with potential parent can be made a child. The top-most item cant be a child.
 
-		// :TODO: Replace this with splice
-		var new_array = parent.children.slice(0, node_index); // Copy the nodes up until the current node - don't copy current node.
-		var current_node = parent.children[node_index];
-		var node_copy = {"id": id, "title": current_node.title};
-		if(typeof current_node.children !== "undefined") node_copy.children = current_node.children;
+		var node_copy = this.getChildCopy(parent, node_index);
 
-		if(typeof new_array[new_array.length - 1]['children'] === "undefined") { // No children
-			new_array[new_array.length - 1]['children'] = [node_copy];
+		// Make the current node a child of the sibling node just above it.
+		if(typeof parent['children'][node_index - 1]['children'] === "undefined") { // No children
+			parent['children'][node_index - 1]['children'] = [node_copy];
 		} else { // There is existing children. Add a new element at the end
-			new_array[new_array.length - 1]['children'] = new_array[new_array.length - 1]['children'].concat(node_copy);
+			parent['children'][node_index - 1]['children'].push(node_copy);
 		}
 
-		if(parent.children.length > node_index + 1)
-			new_array = new_array.concat(parent.children.slice(node_index + 1)); // Add the rest of the children after this.
-
-		parent['children'] = new_array;
+		parent.children.splice(node_index, 1); // Delete the node from the old position.
 
 		return id;
 	},
@@ -83,14 +74,19 @@ var Data = {
 
 		var node_index = Number(node_path[node_path.length - 1]); // Index of the current node.
 
-		var current_node = parent.children[node_index];
-		var node_copy = {"id": id, "title": current_node.title};
-		if(typeof current_node.children !== "undefined") node_copy.children = current_node.children;
-
-		parent.children.splice(node_index, 1);
+		var node_copy = this.getChildCopy(parent, node_index);
+		parent.children.splice(node_index, 1); // Delete the node
 
 		var parent_node_index = Number(node_path[node_path.length - 3]);
-		grandparent['children'].splice(parent_node_index+1, 0, node_copy);
+		grandparent['children'].splice(parent_node_index+1, 0, node_copy); // Add the node to the grandparent.
+	},
+
+	getChildCopy(parent, index_to_copy) {
+		var node = parent.children[index_to_copy];
+		var node_copy = {"id": node.id, "title": node.title};
+		if(typeof node.children !== "undefined") node_copy.children = node.children;
+
+		return node_copy;
 	},
 
 	getNode(id) {
