@@ -81,7 +81,9 @@ class Node extends Component {
 	    var id = this.state.id;
 
 	    if (e.keyCode === KEYS.TAB && e.shiftKey) {
-	    	Data.makeParent();
+	    	Data.makeParent(id);
+	    	console.log("hi")
+	    	e.preventDefault();
 	    	renderAll();
 
 	    } else if (e.keyCode === KEYS.TAB) {
@@ -147,7 +149,7 @@ class App extends Component {
 		// The limitations of the ES6 syntax.
 	    this.refreshJson = this.refreshJson.bind(this);
 	}
-	
+
 	refreshJson() {
 		this.textArea.value = Data.getAsString();
 	}

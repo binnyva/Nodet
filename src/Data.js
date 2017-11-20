@@ -56,6 +56,7 @@ var Data = {
 		var node_index = Number(node_path[node_path.length - 1]); // Index of the current node.
 		if(node_index === 0) return 0; // Only elements with potential parent can be made a child. The top-most item cant be a child.
 
+		// :TODO: Replace this with splice
 		var new_array = parent.children.slice(0, node_index); // Copy the nodes up until the current node - don't copy current node.
 		var current_node = parent.children[node_index];
 		var node_copy = {"id": id, "title": current_node.title};
@@ -76,7 +77,20 @@ var Data = {
 	},
 
 	makeParent(id) {
+		var node_path = this.findNode(this.data, id);
+		var parent = this.getParentNode(id);
+		var grandparent = this.getParentNode(parent.id);
 
+		var node_index = Number(node_path[node_path.length - 1]); // Index of the current node.
+
+		var current_node = parent.children[node_index];
+		var node_copy = {"id": id, "title": current_node.title};
+		if(typeof current_node.children !== "undefined") node_copy.children = current_node.children;
+
+		parent.children.splice(node_index, 1);
+
+		var parent_node_index = Number(node_path[node_path.length - 3]);
+		grandparent['children'].splice(parent_node_index+1, 0, node_copy);
 	},
 
 	getNode(id) {
