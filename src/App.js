@@ -27,6 +27,9 @@ class Node extends Component {
 	}
 	componentDidMount() {
 		this.setOpenCloseIcon();
+		if(this.state.id === 200) {
+			this.textInput.focus();
+		}
 	}
 
 	handleChange(e) {
@@ -77,11 +80,21 @@ class Node extends Component {
 	    };
 	    var id = this.state.id;
 
-	    if(e.keyCode === KEYS.ENTER)  {
-	    	console.log("NEW ROW!");
+	    if (e.keyCode === KEYS.TAB && e.shiftKey) {
+	    	Data.makeParent();
+	    	renderAll();
+
+	    } else if (e.keyCode === KEYS.TAB) {
+	    	var node_id = Data.makeChild(id);
+	    	if(!node_id) e.preventDefault();
+	    	renderAll();
+
+	    } else if (e.keyCode === KEYS.ENTER && e.ctrlKey) {
+	        Data.addChild(id);
+	        renderAll();
+
+	    } else if(e.keyCode === KEYS.ENTER)  {
 	    	Data.addSiblingAfter(id);
-	    	// var node = {"id":200, title:""};
-	    	// return (<Node key="200" node={node} />);
 	    	renderAll();
 	    }
 	}
@@ -90,7 +103,9 @@ class Node extends Component {
 		return (
 			<li className="node">
 				<span className={'open-status glyphicon ' + this.state.plusIcon} onClick={this.toggle}></span>
-				<input type="text" className="node-text" value={this.state.value} data-id={this.state.id} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
+				<input type="text" className="node-text" value={this.state.value} data-id={this.state.id} 
+					onChange={this.handleChange} onKeyDown={this.handleKeyDown}
+					ref={(input) => { this.textInput = input }} />
 				<TreeChildren nodes={this.props.node.children} status={this.state.status} />
 			</li>
 		);
@@ -125,16 +140,29 @@ class Tree extends Component {
 }
 
 
-
 class App extends Component {
+	constructor(props) {
+		super(props);
+
+		// The limitations of the ES6 syntax.
+	    this.refreshJson = this.refreshJson.bind(this);
+	}
+	
+	refreshJson() {
+		this.textArea.value = Data.getAsString();
+	}
+
 	render() {
 		Data.load();
 		var data = Data.get();
-		console.log(data);
+		var json = Data.getAsString();
 
 	    return (
 	      <div className="App">
 	        <Tree tree={data} />
+
+	        <textarea rows="10" cols="70" ref={(input) => { this.textArea = input }}>{json}</textarea><br />
+	        <input type="button" onClick={this.refreshJson} value="Refresh" />
 	      </div>
 	    );
 	}
@@ -145,3 +173,7 @@ function renderAll() {
 }
 
 export default App;
+
+// TODO
+// https://reactjs.org/docs/refs-and-the-dom.html
+// Try tab-ing 'HTML UI' and 'Models'. Some error.
