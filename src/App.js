@@ -44,12 +44,13 @@ class Node extends Component {
 		if(this.state.status === 'open'){
 			this.state.status = 'close';
 		} else {
-			this.state.status = 'open'; // Intentionally not using setState. Or the next line won't work as expected.
+			this.state.status = 'open'; // Intentionally not using this.setState(). Or the next line won't work as expected.
 		}
 		this.setOpenCloseIcon();
 	}
 
 	setOpenCloseIcon() {
+		console.log(this.state.value, this.state.childCount);
 		if(this.state.childCount > 0) {
 			if(this.state.status === 'open') {
 				this.setState({plus:'-'});
@@ -82,8 +83,6 @@ class Node extends Component {
 
 	    if (e.keyCode === KEYS.TAB && e.shiftKey) {
 	    	Data.makeParent(id);
-	    	console.log("hi")
-	    	e.preventDefault();
 	    	renderAll();
 
 	    } else if (e.keyCode === KEYS.TAB) {
@@ -99,6 +98,8 @@ class Node extends Component {
 	    	Data.addSiblingAfter(id);
 	    	renderAll();
 	    }
+
+	    e.preventDefault();
 	}
 
 	render() {
@@ -175,7 +176,3 @@ function renderAll() {
 }
 
 export default App;
-
-// TODO
-// https://reactjs.org/docs/refs-and-the-dom.html
-// Try tab-ing 'HTML UI' and 'Models'. Some error.
