@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Test</title>
+<script type="text/javascript">
+	var exports = {}
+</script>
+<script type="text/javascript" src="tabdown.js"></script>
+<script type="text/javascript">
+var id = 20;
+var text = "Parent Conversation\n\
+\n\
+Problem Statement: \n\
+	Parents don't know about what's going on in my life. \n\
+	Many of the good things in my life is very against what they belive to be good/right.\n\
+	I haven't told them much.\n\
+\n\
+Things I have to say:\n\
+	Arathi\n\
+	Life style in Blore\n\
+		Friends\n\
+		Hanging outs\n\
+	Long term plans\n\
+	My General Belief systems";
+
+var tabdown = exports;
+var lines = text.split("\n");
+var tree = tabdown.parse(lines);
+
+console.log(tree);
+
+
+// var struct= [];
+// var indent_found = false;
+// var indent_space_count = 2;
+// var indent_replacer = '';
+// for (var i = 0; i < indent_space_count; i++) {
+// 	indent_replacer += ' ';
+// }
+// text = text.replace(/\t/g, indent_replacer);
+
+// // Split the text into lines
+// var lines = text.split("\n");
+
+// console.log(lines);
+
+// function recurseTextTree(parent, depth, source) {}
+//     for (var i = 0; i < lines.length; i++) {
+// 		var l = lines[i];
+// 		var indent_depth = 0;
+
+// 		var indent = l.match(/^(\s+)/);
+// 		if(indent) {
+// 			var space_count = indent[0].length;
+// 			indent_depth = space_count / indent_space_count;
+// 		}
+
+//         if indent_depth < depth {
+//             break;
+//         }
+
+//         node = last_line.strip()
+//         if indent_depth >= depth:
+//             if parent is not None:
+//                 print "%s: %s" %(parent, node)
+//             last_line = _recurse_tree(node, indent_depth+1, source)
+//     return last_line
+// }
+
+// recurseTextTree(struct, 0, lines);
+
+
+// // Go line by line...
+// for (var i = 0; i < lines.length; i++) {
+// 	var l = lines[i];
+// 	var indent_depth = 0;
+
+// 	var indent = l.match(/^(\s+)/);
+// 	if(indent) {
+// 		var space_count = indent[0].length;
+// 		indent_depth = space_count / indent_space_count;
+
+// 		console.log(l, "'" + indent[0] +"'", space_count, indent_depth);
+// 	}
+
+// 	if(!indent_depth) {
+// 		struct.push({"id": getUniqueId(), "title": l.trim()});
+// 		last_parent = struct.length - 1;
+// 	}
+
+// 	last_indent_depth = indent_depth;
+// }
+
+// function getUniqueId() {
+// 	return ++id;
+// }
+/*
+[{"id":34,"title":"Things to do","children":[{"id":39,"title":"Get a haircut"},{"id":40,"title":"Mobile UI for Frindlee","children":[{"id":43,"title":"API Core","children":[{"id":44,"title":"HTML UI"}]},{"id":45,"title":"Models"},{"id":46,"title":"Routes"},{"id":47,"title":"Controllers"}]}]}]
+*/
+</script>
+</head>
+<body>
+
+</body>
+</html> 

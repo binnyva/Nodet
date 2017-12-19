@@ -9,6 +9,10 @@ var Data = {
 		return this.data;
 	},
 
+	parseText(text) {
+
+	},
+
 	getAsString() {
 		return JSON.stringify(this.data);
 	},
