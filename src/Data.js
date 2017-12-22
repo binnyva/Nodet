@@ -1,8 +1,6 @@
-import json_data from './data.json';
-
 var Data = {
-	load() {
-		this.data = json_data;
+	load(data) {
+		this.data = data;
 	},
 
 	get() {
@@ -10,7 +8,42 @@ var Data = {
 	},
 
 	parseText(text) {
+		var tabdown = require("tabdown-sacha");
+		var lines = text.split("\n");
+		var tree = tabdown.parse(lines);
+		var data = this.changeTreeFormat(tree);
+		this.load(data);
+	},
 
+	changeTreeFormat(tree) {
+		var data;
+		if(tree.length) { // Child
+			data = [];
+			for(var i=0; i<tree.length; i++) {
+				var node = tree[i];
+				var arr = {
+					"id": this.getUniqueId(),
+					"title": null
+				};
+				if(node.data) {
+					arr.title = node.data;
+				}
+				if(node.children.length) {
+					arr.children = this.changeTreeFormat(node.children);
+				}
+				data.push(arr);
+			}
+		} else if(tree.data) { // One Root Node
+			data = {
+				"id": this.getUniqueId(),
+				"title": tree.data,
+				"children": this.changeTreeFormat(tree.children)
+			}
+		} else { // Multilpe root rodes
+			data = this.changeTreeFormat(tree.children);
+		}
+
+		return data;
 	},
 
 	getAsString() {
@@ -18,7 +51,14 @@ var Data = {
 	},
 
 	getUniqueId() {
-		return 200;
+		var d = new Date().getTime();
+	    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	        var r = (d + Math.random()*16)%16 | 0;
+	        d = Math.floor(d/16);
+	        // eslint-disable-next-line
+	        return (c === 'x' ? r : (r&0x3|0x8)).toString(16);
+	    });
+	    return uuid;
 	},
 
 	addSiblingAfter(id) {

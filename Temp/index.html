@@ -22,14 +22,56 @@ Things I have to say:\n\
 		Friends\n\
 		Hanging outs\n\
 	Long term plans\n\
-	My General Belief systems";
+	My General Belief systems\n\
+		That's all";
 
 var tabdown = exports;
 var lines = text.split("\n");
 var tree = tabdown.parse(lines);
 
-console.log(tree);
+var data = changeTreeFormat(tree);
 
+function changeTreeFormat(tree) {
+	if(tree.length) { // Child
+		var data = [];
+		for(var i=0;i<tree.length;i++) {
+			var node = tree[i];
+			var arr = {
+				"id": getUniqueId(),
+				"title": null
+			};
+			if(node.data) {
+				arr.title = node.data;
+			}
+			if(node.children.length) {
+				arr.children = changeTreeFormat(node.children);
+			}
+			data.push(arr);
+		}
+	} else if(tree.data) { // One Root Node
+		var data = {
+			"id": getUniqueId(),
+			"title": tree.data
+		}
+	} else { // Multilpe root rodes
+		var data = changeTreeFormat(tree.children);
+	}
+
+	return data;
+}
+
+
+function getUniqueId() {
+    var d = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+}
+console.log(tree);
+console.log(data);
 
 // var struct= [];
 // var indent_found = false;

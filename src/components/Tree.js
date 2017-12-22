@@ -39,15 +39,17 @@ class Node extends Component {
 
 	toggle() {
 		if(this.state.status === 'open'){
+			// eslint-disable-next-line
 			this.state.status = 'close';
 		} else {
+			// eslint-disable-next-line
 			this.state.status = 'open'; // Intentionally not using this.setState(). Or the next line won't work as expected.
 		}
 		this.setOpenCloseIcon();
 	}
 
 	setOpenCloseIcon() {
-		console.log(this.state.value, this.state.childCount);
+		// console.log(this.state.value, this.state.childCount);
 		if(this.state.childCount > 0) {
 			if(this.state.status === 'open') {
 				this.setState({plus:'-'});
@@ -77,26 +79,30 @@ class Node extends Component {
 	        SPACE: 32
 	    };
 	    var id = this.state.id;
+	    var triggered = false;
 
 	    if (e.keyCode === KEYS.TAB && e.shiftKey) {
 	    	Data.makeParent(id);
-	    	renderAll();
+	    	triggered = true;
 
 	    } else if (e.keyCode === KEYS.TAB) {
 	    	var node_id = Data.makeChild(id);
 	    	if(!node_id) e.preventDefault();
-	    	renderAll();
+	    	triggered = true;
 
 	    } else if (e.keyCode === KEYS.ENTER && e.ctrlKey) {
 	        Data.addChild(id);
-	        renderAll();
+	    	triggered = true;
 
 	    } else if(e.keyCode === KEYS.ENTER)  {
 	    	Data.addSiblingAfter(id);
-	    	renderAll();
+	    	triggered = true;
 	    }
 
-	    e.preventDefault();
+	    if(triggered) {
+	    	renderAll();
+			e.preventDefault();
+		}
 	}
 
 	render() {
