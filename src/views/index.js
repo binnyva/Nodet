@@ -1,49 +1,22 @@
 import React, { Component } from 'react';
-import Tree from '../components/Tree.js';
-import Data from "../Data.js";
-import json_data from '../data.json';
+import TreeList from '../components/TreeList.js';
 
 export default class IndexView extends Component {
 	constructor(props) {
 		super(props);
 
+		// :TODO: Get the list of all trees using API
+		var data = {"success":true,"error":false,"data":[{"name":"Things to do","id":"5a3fb8ef24e2d1456889cc41","data":false}]};
 		this.state = {
-			show_json: false
-		}
-
-		// The limitations of the ES6 syntax.
-	    this.refreshJson = this.refreshJson.bind(this);
-	}
-
-	refreshJson() {
-		this.textArea.value = Data.getAsString();
-	}
-
-	saveData() {
-		console.log(Data.get());
+			trees: data.data
+		};
 	}
 
 	render() {
-		var data = Data.get();
-		if(!data) {
-			Data.load(json_data);
-			data = Data.get();
-		}
-		
-		var json = Data.getAsString();
-
-	    return (
+		return (
 	      <div className="App">
-	        <Tree tree={data} />
-
-	        <input type="button" onClick={this.saveData}  className="btn btn-success" value="Save" />
-
-	        <div className={this.state.show_json ? "show" : "hide"} >
-		        <textarea rows="10" cols="70" ref={(input) => { this.textArea = input }} defaultValue={json}></textarea><br />
-		        <input type="button" onClick={this.refreshJson} value="Refresh" />
-	        </div>
-	        <input type="button" onClick={() => this.setState({"show_json": this.state.show_json ? false : true})}  className={this.state.show_json ? "hide" : "show"} value="Show Data" />
-	      </div>
+	        <TreeList trees={this.state.trees} />
+          </div>
 	    );
 	}
 } 
