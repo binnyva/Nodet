@@ -58,6 +58,8 @@ var Data = {
 	        // eslint-disable-next-line
 	        return (c === 'x' ? r : (r&0x3|0x8)).toString(16);
 	    });
+
+	    this.new_node_id = uuid;
 	    return uuid;
 	},
 
@@ -183,5 +185,6 @@ var Data = {
 	}
 }
 Data.data = false; // Not sure how to put this in the structure properly.
+Data.new_node_id = false;
 
 export default Data;

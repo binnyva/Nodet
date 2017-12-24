@@ -7,12 +7,20 @@ export default class IndexView extends Component {
 	constructor(props) {
 		super(props);
 
+		this.state = {
+			show_json: false
+		}
+
 		// The limitations of the ES6 syntax.
 	    this.refreshJson = this.refreshJson.bind(this);
 	}
 
 	refreshJson() {
 		this.textArea.value = Data.getAsString();
+	}
+
+	saveData() {
+		console.log(Data.get());
 	}
 
 	render() {
@@ -28,8 +36,13 @@ export default class IndexView extends Component {
 	      <div className="App">
 	        <Tree tree={data} />
 
-	        <textarea rows="10" cols="70" ref={(input) => { this.textArea = input }} defaultValue={json}></textarea><br />
-	        <input type="button" onClick={this.refreshJson} value="Refresh" />
+	        <input type="button" onClick={this.saveData}  className="btn btn-success" value="Save" />
+
+	        <div className={this.state.show_json ? "show" : "hide"} >
+		        <textarea rows="10" cols="70" ref={(input) => { this.textArea = input }} defaultValue={json}></textarea><br />
+		        <input type="button" onClick={this.refreshJson} value="Refresh" />
+	        </div>
+	        <input type="button" onClick={() => this.setState({"show_json": this.state.show_json ? false : true})}  className={this.state.show_json ? "hide" : "show"} value="Show Data" />
 	      </div>
 	    );
 	}

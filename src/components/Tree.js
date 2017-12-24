@@ -24,7 +24,7 @@ class Node extends Component {
 	}
 	componentDidMount() {
 		this.setOpenCloseIcon();
-		if(this.state.id === 200) {
+		if(this.state.id === Data.new_node_id) {
 			this.textInput.focus();
 		}
 	}
@@ -86,7 +86,7 @@ class Node extends Component {
 	    	triggered = true;
 
 	    } else if (e.keyCode === KEYS.TAB) {
-	    	var node_id = Data.makeChild(id);
+	    	let node_id = Data.makeChild(id);
 	    	if(!node_id) e.preventDefault();
 	    	triggered = true;
 
@@ -109,7 +109,7 @@ class Node extends Component {
 		return (
 			<li className="node">
 				<span className={'open-status glyphicon ' + this.state.plusIcon} onClick={this.toggle}></span>
-				<input type="text" className="node-text" value={this.state.value} data-id={this.state.id} 
+				<input type="text" className="node-text" value={this.state.value} data-id={this.state.id} key={this.state.id}
 					onChange={this.handleChange} onKeyDown={this.handleKeyDown}
 					ref={(input) => { this.textInput = input }} />
 				<TreeChildren nodes={this.props.node.children} status={this.state.status} />
@@ -136,9 +136,18 @@ class TreeChildren extends Component {
 }
 
 class Tree extends Component {
+	constructor(props) {
+		super(props);
+		let tree_name = "Untitled";
+		if(typeof this.props.tree[0].title !== "undefined") tree_name = this.props.tree[0].title;
+		this.state = {
+			treeName: tree_name
+		}
+	}
 	render() {
 		return (
 			<div>
+				<input ref={(input) => this.treeName = input} type="text" className="tree-name" defaultValue={this.state.treeName} /><br />
 				<TreeChildren nodes={this.props.tree} />
 			</div>
 		);

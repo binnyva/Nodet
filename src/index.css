@@ -19,3 +19,8 @@ input {
 	float:left;
 	margin-left: -15px;
 }
+.tree-name {
+	font-size: 200%;
+	border: 1px solid #ccc;
+	padding-left: 5px;
+}
