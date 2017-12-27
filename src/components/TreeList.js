@@ -12,6 +12,8 @@ class TreeList extends Component {
 				</ul>
 			);
 		}
+
+		return "";
 	}
 }
 

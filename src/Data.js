@@ -8,7 +8,7 @@ var Data = {
 	},
 
 	parseText(text) {
-		var tabdown = require("tabdown-sacha");
+		var tabdown = require("tabdown-sacha"); 
 		var lines = text.split("\n");
 		var tree = tabdown.parse(lines);
 		var data = this.changeTreeFormat(tree);

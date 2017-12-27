@@ -5,12 +5,24 @@ export default class IndexView extends Component {
 	constructor(props) {
 		super(props);
 
-		// :TODO: Get the list of all trees using API
-		var data = {"success":true,"error":false,"data":[{"name":"Things to do","id":"5a3fb8ef24e2d1456889cc41","data":false}]};
 		this.state = {
-			trees: data.data
+			trees: false
 		};
 	}
+
+	componentDidMount() {
+		// Get the list of all trees using API
+	    fetch('http://localhost/Projects/Nodet/api-php/trees/')
+	      	.then(function(response) {
+	      		if (response.status >= 400) {
+			       throw new Error("Bad response from server");
+			    }
+			    return response.json();
+	      	}).then(function(response) {
+		      	const trees = response.data;
+		        this.setState({ trees: trees });
+		    }.bind(this));
+	  }
 
 	render() {
 		return (

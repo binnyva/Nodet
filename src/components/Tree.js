@@ -138,16 +138,16 @@ class TreeChildren extends Component {
 class Tree extends Component {
 	constructor(props) {
 		super(props);
-		let tree_name = "Untitled";
-		if(typeof this.props.tree[0].title !== "undefined") tree_name = this.props.tree[0].title;
+		let name = "Untitled";
+		if(typeof this.props.name !== "undefined") name = this.props.name;
 		this.state = {
-			treeName: tree_name
+			name: name
 		}
 	}
 	render() {
 		return (
 			<div>
-				<input ref={(input) => this.treeName = input} type="text" className="tree-name" defaultValue={this.state.treeName} /><br />
+				<input ref={(input) => this.name = input} type="text" className="tree-name" defaultValue={this.state.name} /><br />
 				<TreeChildren nodes={this.props.tree} />
 			</div>
 		);

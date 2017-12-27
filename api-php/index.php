@@ -9,7 +9,7 @@ $mongo = new \MongoDB\Client;
 $db = $mongo->Nodet;
 $trees_collection = $db->Tree;
 
-// header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: *");
 // header("Content-Type: application/json");
 
 $api = new API;
@@ -42,6 +42,20 @@ $api->get('/trees', function() use ($trees_collection) {
 
 	showSuccess(array('data' => $all_trees));
 });
+
+$api->get('/trees/{tree_id}', function($tree_id_str) use ($trees_collection) {
+	$tree_id = new MongoDB\BSON\ObjectId($tree_id_str);
+	$document = $trees_collection->findOne(array("_id" => $tree_id));
+
+	$tree = array(
+		'name'	=> $document->name,
+		'id'	=> $tree_id_str,
+		'data'	=> $document->data
+	);
+
+	showSuccess(array('data' => $tree));
+});
+
 $api->notFound(function() {
 	http_response_code(404);
 	print "404";
