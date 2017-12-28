@@ -106,6 +106,7 @@ class Node extends Component {
 	}
 
 	render() {
+		// console.log(this.state);
 		return (
 			<li className="node">
 				<span className={'open-status glyphicon ' + this.state.plusIcon} onClick={this.toggle}></span>
@@ -120,6 +121,7 @@ class Node extends Component {
 
 class TreeChildren extends Component {
 	render() {
+		// console.log("TreeChildren: ", this.props.nodes );
 		var items;
 		if(this.props.nodes) items = this.props.nodes.map((node) => <Node key={node.id} node={node} />);
 

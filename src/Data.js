@@ -15,6 +15,7 @@ var Data = {
 		this.load(data);
 	},
 
+	/// Converts the TabDown tree format to the one we use.
 	changeTreeFormat(tree) {
 		var data;
 		if(tree.length) { // Child
@@ -110,6 +111,8 @@ var Data = {
 
 		parent.children.splice(node_index, 1); // Delete the node from the old position.
 
+		this.node_to_update_id = parent['children'][node_index - 1].id;
+
 		return id;
 	},
 
@@ -120,8 +123,16 @@ var Data = {
 
 		var node_index = Number(node_path[node_path.length - 1]); // Index of the current node.
 
+		// Copy the node in question.
 		var node_copy = this.getChildCopy(parent, node_index);
-		parent.children.splice(node_index, 1); // Delete the node
+
+		// Get a copy of all children of the parent after this node.
+		var children_after_node = parent.children.slice(node_index+1);
+
+		// Delete all the children of parent after this node.
+		parent.children.splice(node_index);
+
+		node_copy.children = children_after_node;
 
 		var parent_node_index = Number(node_path[node_path.length - 3]);
 		grandparent['children'].splice(parent_node_index+1, 0, node_copy); // Add the node to the grandparent.
@@ -186,5 +197,6 @@ var Data = {
 }
 Data.data = false; // Not sure how to put this in the structure properly.
 Data.new_node_id = false;
+Data.node_to_update_id = false;
 
 export default Data;
