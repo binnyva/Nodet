@@ -12,7 +12,7 @@ export default class ImportView extends Component {
 	import() {
 		const text = this.textArea.value;
 		Data.parseText(text);
-		this.props.history.push("/");
+		this.props.history.push("/tree/0");
 	}
 
 	render() {

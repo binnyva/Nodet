@@ -18,8 +18,8 @@ export default class HeaderView extends Component {
 		      <div className="collapse navbar-collapse">
 				<ul className="nav navbar-nav pull-right">
 					<li><Link to="/">Home</Link></li>
-					<li><Link to="import">Import</Link></li>
-					<li><Link to="export">Export</Link></li>
+					<li><Link to="/import">Import</Link></li>
+					<li><Link to="/export">Export</Link></li>
 				</ul>
 		      </div>
 		    </div>

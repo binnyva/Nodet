@@ -1,18 +1,34 @@
 var Data = {
-	load(data) {
+	data: false,
+	tree_id: 0,
+	tree_name: "",
+	new_node_id: false,
+
+	load(data, tree_id = 0, tree_name = "") {
 		this.data = data;
+		this.tree_id = tree_id;
+		this.tree_name = tree_name;
 	},
 
 	get() {
 		return this.data;
 	},
 
+	getTreeId() {
+		return this.tree_id;
+	},
+
+	getTreeName() {
+		return this.tree_name;
+	},
+
 	parseText(text) {
-		var tabdown = require("tabdown-sacha"); 
-		var lines = text.split("\n");
-		var tree = tabdown.parse(lines);
-		var data = this.changeTreeFormat(tree);
-		this.load(data);
+		let tabdown = require("tabdown-sacha"); 
+		let lines = text.split("\n");
+		let tree = tabdown.parse(lines);
+		let data = this.changeTreeFormat(tree);
+		let name = data[0].title;
+		this.load(data, 0, name);
 	},
 
 	/// Converts the TabDown tree format to the one we use.
@@ -111,8 +127,6 @@ var Data = {
 
 		parent.children.splice(node_index, 1); // Delete the node from the old position.
 
-		this.node_to_update_id = parent['children'][node_index - 1].id;
-
 		return id;
 	},
 
@@ -195,8 +209,5 @@ var Data = {
 		return false;
 	}
 }
-Data.data = false; // Not sure how to put this in the structure properly.
-Data.new_node_id = false;
-Data.node_to_update_id = false;
 
 export default Data;

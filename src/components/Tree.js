@@ -21,7 +21,17 @@ class Node extends Component {
 	    this.handleChange = this.handleChange.bind(this);
 	    this.toggle = this.toggle.bind(this);
 	    this.handleKeyDown = this.handleKeyDown.bind(this);
+	    this.setOpenCloseIcon = this.setOpenCloseIcon.bind(this);
 	}
+
+	componentWillReceiveProps(nextProps){
+		if(nextProps.node.children) {
+			// eslint-disable-next-line
+			this.state.childCount = nextProps.node.children.length;
+			this.setOpenCloseIcon();
+		}
+	}
+
 	componentDidMount() {
 		this.setOpenCloseIcon();
 		if(this.state.id === Data.new_node_id) {
@@ -49,7 +59,6 @@ class Node extends Component {
 	}
 
 	setOpenCloseIcon() {
-		// console.log(this.state.value, this.state.childCount);
 		if(this.state.childCount > 0) {
 			if(this.state.status === 'open') {
 				this.setState({plus:'-'});
@@ -106,7 +115,6 @@ class Node extends Component {
 	}
 
 	render() {
-		// console.log(this.state);
 		return (
 			<li className="node">
 				<span className={'open-status glyphicon ' + this.state.plusIcon} onClick={this.toggle}></span>
@@ -121,9 +129,11 @@ class Node extends Component {
 
 class TreeChildren extends Component {
 	render() {
-		// console.log("TreeChildren: ", this.props.nodes );
+
 		var items;
-		if(this.props.nodes) items = this.props.nodes.map((node) => <Node key={node.id} node={node} />);
+		if(this.props.nodes) {
+			items = this.props.nodes.map((node) => <Node key={node.id} node={node} />);
+		}
 
 		var className = "show";
 		if(this.props.status === "close") className = "hide";
