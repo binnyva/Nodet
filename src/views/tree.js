@@ -55,6 +55,23 @@ export default class TreeView extends Component {
 
 	saveData() {
 		console.log(this.state.tree_id, Data.get());
+		fetch('http://localhost/Projects/Nodet/api-php/trees/', {
+			method: 'POST',
+			headers: {'Content-Type':'application/json'},
+			body: JSON.stringify({
+				"tree": Data.get(),
+				"tree_name": Data.tree_name,
+			})
+		}).then(function(response) {
+      		if (response.status >= 400) {
+		       throw new Error("Bad response from server");
+		    }
+		    return response.json();
+      	}).then(function(response) {
+	      	if(response.success) {
+	      		console.log("Got it");
+	      	}
+	    });
 	}
 
 	render() {

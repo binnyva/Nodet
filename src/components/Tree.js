@@ -159,7 +159,10 @@ class Tree extends Component {
 	render() {
 		return (
 			<div>
-				<input ref={(input) => this.name = input} type="text" className="tree-name" defaultValue={this.state.name} /><br />
+				<input ref={(input) => {
+					this.name = input;
+					Data.tree_name= input;
+				}} type="text" className="tree-name" defaultValue={this.state.name} /><br />
 				<TreeChildren nodes={this.props.tree} />
 			</div>
 		);

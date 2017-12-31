@@ -15,7 +15,8 @@ header("Access-Control-Allow-Origin: *");
 $api = new API;
 
 $api->post('/trees', function() {
-
+	$tree = $PARAM['tree'];
+	dump($tree);
 });
 
 $api->get('/trees', function() use ($trees_collection) {
