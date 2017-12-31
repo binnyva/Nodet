@@ -10,13 +10,26 @@ $db = $mongo->Nodet;
 $trees_collection = $db->Tree;
 
 header("Access-Control-Allow-Origin: *");
-// header("Content-Type: application/json");
+header("Content-Type: application/json");
+// header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Access-Control-Allow-Origin');
+// header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
 
 $api = new API;
 
-$api->post('/trees', function() {
-	$tree = $PARAM['tree'];
-	dump($tree);
+$api->post('/trees/', function() {
+	global $trees_collection;
+
+	$post_data = file_get_contents("php://input");
+	$data = json_decode($post_data);
+
+	$insert = $trees_collection->insertOne(array(
+		"data" => $data->tree,
+		"name" =>  $data->tree_name
+	));
+	$id = $insert->getInsertedId();
+
+	if($insert->getInsertedCount())	showSuccess(array('id' => $id));
+	else showError("Can't insert document");
 });
 
 $api->get('/trees', function() use ($trees_collection) {

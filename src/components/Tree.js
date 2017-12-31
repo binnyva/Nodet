@@ -155,14 +155,21 @@ class Tree extends Component {
 		this.state = {
 			name: name
 		}
+
+		this.setTreeName = this.setTreeName.bind(this);
 	}
+
+	// :TODO: Set tree name automatically in the Data object too.
+	setTreeName(e) {
+		let name = e.target.value;
+		this.setState({name: name});
+		Data.tree_name = name;
+	}
+
 	render() {
 		return (
 			<div>
-				<input ref={(input) => {
-					this.name = input;
-					Data.tree_name= input;
-				}} type="text" className="tree-name" defaultValue={this.state.name} /><br />
+				<input ref={(input) => { this.name = input; }} onChange={this.setTreeName} type="text" className="tree-name" defaultValue={this.state.name} /><br />
 				<TreeChildren nodes={this.props.tree} />
 			</div>
 		);
