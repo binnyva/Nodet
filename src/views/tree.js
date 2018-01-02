@@ -8,7 +8,7 @@ export default class TreeView extends Component {
 		super(props);
 
 		this.state = {
-			show_json: false,
+			show_json: true,
 			tree_id: props.match.params.id
 		}
 
@@ -29,9 +29,7 @@ export default class TreeView extends Component {
 			
 			this.setState({
 					name: Data.getTreeName(),
-					tree: {
-						data: data
-					}
+					tree: data
 				});
 
 		} else { // Page called from Tree Index - get tree data from DB
@@ -72,7 +70,7 @@ export default class TreeView extends Component {
 		};
 
 		let body = {
-			"tree": Data.get(),
+			"data": Data.get(),
 			"tree_name": Data.tree_name
 		};
 

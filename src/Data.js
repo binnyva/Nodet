@@ -28,17 +28,24 @@ var Data = {
 		let tree = tabdown.parse(lines);
 		let data = this.changeTreeFormat(tree);
 		let name = data[0].title;
-		this.load(data, 0, name);
+		this.load({
+			"id": this.getUniqueId(),
+			"name": "Untitled",
+			"data":data
+		}, 0, name);
 	},
 
 	getNewTree() {
-		this.load([
+		this.load({
+			"id": this.getUniqueId(),
+			"name": "Untitled",
+			"data": [
 			{
 				"id": this.getUniqueId(),
 				"title": "Untitled",
 				"children": []
 			}
-		], 0, "Untitled");
+		]}, 0, "Untitled");
 		return this.get();
 	},
 
@@ -99,6 +106,8 @@ var Data = {
 
 		var new_id = this.getUniqueId();
 		var new_node = {"id": new_id, "title": ""}; // Add a new node 
+
+		console.log("AddSiblingAfter", parent, id, node_path, node_index);
 
 		if(parent.children)
 			parent.children.splice(node_index + 1, 0, new_node);
@@ -191,6 +200,8 @@ var Data = {
 		else // Root level
 			node = parent[index_to_copy];
 
+		console.log(parent, index_to_copy, node);
+
 		var node_copy = {"id": node.id, "title": node.title};
 		if(typeof node.children !== "undefined") node_copy.children = node.children;
 
@@ -206,12 +217,17 @@ var Data = {
 	},
 
 	getParentNode(id) {
-		var node = this.findNode(this.data, id);
+		var data = this.get().data;
+
+		var node = this.findNode(data, id);
+		console.log("getParentNode", id, node, this.data);
 		if(!node) return false;
 		var parent = node.slice(0,-2);
 
-		var reference = this.data; // Get the reference to the node using the path
+		var reference = data; // Get the reference to the node using the path
 		for(var i in parent) reference = reference[parent[i]];
+
+		if(reference.data) return reference.data; // Just horrible. For root level stuff.
 
 		return reference;
 	},

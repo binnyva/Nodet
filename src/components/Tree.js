@@ -129,7 +129,6 @@ class Node extends Component {
 
 class TreeChildren extends Component {
 	render() {
-
 		var items;
 		if(this.props.nodes) {
 			items = this.props.nodes.map((node) => <Node key={node.id} node={node} />);
