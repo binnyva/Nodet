@@ -20,16 +20,16 @@ export default class TreeView extends Component {
 	componentDidMount() {
 		if(this.state.tree_id === "0") { // Data is coming thru an import call.
 			// Imported Data
-			let data = Data.get();
+			let tree = Data.getTree();
 
 			// New Tree
-			if(!data) {
-				data = Data.getNewTree();
+			if(!tree) {
+				tree = Data.getNewTree();
 			}
-			
+
 			this.setState({
 					name: Data.getTreeName(),
-					tree: data
+					tree: tree
 				});
 
 		} else { // Page called from Tree Index - get tree data from DB
@@ -42,7 +42,7 @@ export default class TreeView extends Component {
 				    return response.json();
 		      	}).then(function(response) {
 			      	const tree = response.data;
-			      	Data.load(tree, this.state.tree_id, response.data.name);
+			      	Data.loadTree(tree);
 
 			        this.setState({ 
 			        	tree: tree,
@@ -70,7 +70,7 @@ export default class TreeView extends Component {
 		};
 
 		let body = {
-			"data": Data.get(),
+			"data": Data.getTree(),
 			"tree_name": Data.tree_name
 		};
 

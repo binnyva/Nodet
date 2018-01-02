@@ -1,17 +1,29 @@
 var Data = {
-	data: false,
+	tree: false,
 	tree_id: 0,
 	tree_name: "",
 	new_node_id: false,
 
 	load(data, tree_id = 0, tree_name = "") {
-		this.data = data;
+		this.tree = {
+			_id: tree_id,
+			name: tree_name,
+			data: data
+		}
 		this.tree_id = tree_id;
 		this.tree_name = tree_name;
 	},
 
+	loadTree(tree) {
+		this.load(tree.data, tree._id, tree.name);
+	},
+
 	get() {
-		return this.data;
+		return this.tree.data;
+	},
+
+	getTree() {
+		return this.tree;
 	},
 
 	getTreeId() {
@@ -28,25 +40,17 @@ var Data = {
 		let tree = tabdown.parse(lines);
 		let data = this.changeTreeFormat(tree);
 		let name = data[0].title;
-		this.load({
-			"id": this.getUniqueId(),
-			"name": "Untitled",
-			"data":data
-		}, 0, name);
+		this.load(data, 0, name);
 	},
 
 	getNewTree() {
-		this.load({
-			"id": this.getUniqueId(),
-			"name": "Untitled",
-			"data": [
-			{
-				"id": this.getUniqueId(),
-				"title": "Untitled",
-				"children": []
-			}
-		]}, 0, "Untitled");
-		return this.get();
+		this.load([{
+					"id": this.getUniqueId(),
+					"title": "Untitled",
+					"children": []
+				}], 0, "Untitled");
+
+		return this.getTree();
 	},
 
 	/// Converts the TabDown tree format to the one we use.
@@ -82,7 +86,7 @@ var Data = {
 	},
 
 	getAsString() {
-		return JSON.stringify(this.data);
+		return JSON.stringify(this.getTree());
 	},
 
 	getUniqueId() {
@@ -99,7 +103,7 @@ var Data = {
 	},
 
 	addSiblingAfter(id) {
-		var node_path = this.findNode(this.data, id);
+		var node_path = this.findNode(this.get(), id);
 		var parent = this.getParentNode(id);
 
 		var node_index = Number(node_path[node_path.length - 1]);
@@ -134,7 +138,7 @@ var Data = {
 	},
 
 	makeChild(id) {
-		var node_path = this.findNode(this.data, id);
+		var node_path = this.findNode(this.get(), id);
 		var parent = this.getParentNode(id);
 
 		var node_index = Number(node_path[node_path.length - 1]); // Index of the current node.
@@ -167,7 +171,7 @@ var Data = {
 	},
 
 	makeParent(id) {
-		var node_path = this.findNode(this.data, id);
+		var node_path = this.findNode(this.get(), id);
 		var parent = this.getParentNode(id);
 		var grandparent = this.getParentNode(parent.id);
 
@@ -209,25 +213,23 @@ var Data = {
 	},
 
 	getNode(id) {
-		var node = this.findNode(this.data, id);
-		var reference = this.data; // Get the reference to the node using the path
+		var node = this.findNode(this.get(), id);
+		var reference = this.get(); // Get the reference to the node using the path
 		for(var i in node) reference = reference[node[i]];
 
 		return reference;
 	},
 
 	getParentNode(id) {
-		var data = this.get().data;
+		var data = this.get();
 
 		var node = this.findNode(data, id);
-		console.log("getParentNode", id, node, this.data);
+		console.log("getParentNode", id, node, data);
 		if(!node) return false;
 		var parent = node.slice(0,-2);
 
 		var reference = data; // Get the reference to the node using the path
 		for(var i in parent) reference = reference[parent[i]];
-
-		if(reference.data) return reference.data; // Just horrible. For root level stuff.
 
 		return reference;
 	},
