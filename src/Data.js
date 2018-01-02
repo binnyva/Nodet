@@ -31,6 +31,17 @@ var Data = {
 		this.load(data, 0, name);
 	},
 
+	getNewTree() {
+		this.load([
+			{
+				"id": this.getUniqueId(),
+				"title": "Untitled",
+				"children": []
+			}
+		], 0, "Untitled");
+		return this.get();
+	},
+
 	/// Converts the TabDown tree format to the one we use.
 	changeTreeFormat(tree) {
 		var data;
@@ -89,7 +100,10 @@ var Data = {
 		var new_id = this.getUniqueId();
 		var new_node = {"id": new_id, "title": ""}; // Add a new node 
 
-		parent.children.splice(node_index + 1, 0, new_node);
+		if(parent.children)
+			parent.children.splice(node_index + 1, 0, new_node);
+		else // We are at the root.
+			parent.push(new_node);
 
 		return new_id;
 	},
@@ -101,9 +115,10 @@ var Data = {
 
 		if(typeof reference['children'] === "undefined") { // No children
 			reference['children'] = [{"id": new_id, "title": ""}];
+
 		} else { // There is existing children. Add a new element at the top
 			var new_array = {"id": new_id, "title": ""};
-			reference['children'] = new_array.concat(reference['children']);
+			reference['children'].push(new_array);
 		}
 
 		return new_id;
@@ -119,13 +134,25 @@ var Data = {
 		var node_copy = this.getChildCopy(parent, node_index);
 
 		// Make the current node a child of the sibling node just above it.
-		if(typeof parent['children'][node_index - 1]['children'] === "undefined") { // No children
-			parent['children'][node_index - 1]['children'] = [node_copy];
-		} else { // There is existing children. Add a new element at the end
-			parent['children'][node_index - 1]['children'].push(node_copy);
-		}
+		if(parent['children']) {
+			if(typeof parent['children'][node_index - 1]['children'] === "undefined") { // No children
+				parent['children'][node_index - 1]['children'] = [node_copy];
+			} else { // There is existing children. Add a new element at the end
+				parent['children'][node_index - 1]['children'].push(node_copy);
+			}
 
-		parent.children.splice(node_index, 1); // Delete the node from the old position.
+			parent.children.splice(node_index, 1); // Delete the node from the old position.
+
+		// Root level.
+		} else {
+			if(typeof parent[node_index - 1]['children'] === "undefined") { // No children
+				parent[node_index - 1]['children'] = [node_copy];
+			} else { // There is existing children. Add a new element at the end
+				parent[node_index - 1]['children'].push(node_copy);
+			}
+
+			parent.splice(node_index, 1); // Delete the node from the old position.
+		}
 
 		return id;
 	},
@@ -136,6 +163,8 @@ var Data = {
 		var grandparent = this.getParentNode(parent.id);
 
 		var node_index = Number(node_path[node_path.length - 1]); // Index of the current node.
+
+		if(!parent.children) return false; // Root level. Everything here are parents already.
 
 		// Copy the node in question.
 		var node_copy = this.getChildCopy(parent, node_index);
@@ -149,11 +178,19 @@ var Data = {
 		node_copy.children = children_after_node;
 
 		var parent_node_index = Number(node_path[node_path.length - 3]);
-		grandparent['children'].splice(parent_node_index+1, 0, node_copy); // Add the node to the grandparent.
+		if(grandparent['children'])
+			grandparent['children'].splice(parent_node_index+1, 0, node_copy); // Add the node to the grandparent.
+		else // Root level
+			grandparent.push(node_copy);
 	},
 
 	getChildCopy(parent, index_to_copy) {
-		var node = parent.children[index_to_copy];
+		var node = {};
+		if(parent.children)
+			node = parent.children[index_to_copy];
+		else // Root level
+			node = parent[index_to_copy];
+
 		var node_copy = {"id": node.id, "title": node.title};
 		if(typeof node.children !== "undefined") node_copy.children = node.children;
 
@@ -170,6 +207,7 @@ var Data = {
 
 	getParentNode(id) {
 		var node = this.findNode(this.data, id);
+		if(!node) return false;
 		var parent = node.slice(0,-2);
 
 		var reference = this.data; // Get the reference to the node using the path
@@ -189,10 +227,8 @@ var Data = {
 		if(typeof location === "undefined") location = [];
 
 		for(var i in data) {
-			// console.log(id, location, data[i]);
 			if(data[i]['id'] === id) {
 				location.push(i);
-				// console.log("FOUND", location);
 				return location;
 
 			} else if(data[i]['children']) {

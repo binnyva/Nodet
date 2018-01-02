@@ -19,8 +19,13 @@ export default class TreeView extends Component {
 
 	componentDidMount() {
 		if(this.state.tree_id === "0") { // Data is coming thru an import call.
+			// Imported Data
 			let data = Data.get();
-			if(!data) return;
+
+			// New Tree
+			if(!data) {
+				data = Data.getNewTree();
+			}
 			
 			this.setState({
 					name: Data.getTreeName(),
