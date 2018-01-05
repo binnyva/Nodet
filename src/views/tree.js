@@ -8,7 +8,7 @@ export default class TreeView extends Component {
 		super(props);
 
 		this.state = {
-			show_json: true,
+			show_json: false,
 			tree_id: props.match.params.id
 		}
 
@@ -61,9 +61,7 @@ export default class TreeView extends Component {
 		let seen = []; 
 		var replacer = function(key, value) {
 		  if (value !== null && typeof value === "object") {
-		    if (seen.indexOf(value) >= 0) {
-		      return;
-		    }
+		    if (seen.indexOf(value) >= 0) return;
 		    seen.push(value);
 		  }
 		  return value;
@@ -88,8 +86,6 @@ export default class TreeView extends Component {
 		      	}
 		    });
 	}
-
-
 
 	render() {
 		let data = false;

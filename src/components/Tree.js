@@ -30,6 +30,9 @@ class Node extends Component {
 			this.state.childCount = nextProps.node.children.length;
 			this.setOpenCloseIcon();
 		}
+		if(this.state.id === Data.focus_on_node_id) {
+			this.textInput.focus();
+		}
 	}
 
 	componentDidMount() {
@@ -103,8 +106,16 @@ class Node extends Component {
 	        Data.addChild(id);
 	    	triggered = true;
 
-	    } else if(e.keyCode === KEYS.ENTER)  {
+	    } else if(e.keyCode === KEYS.ENTER) {
 	    	Data.addSiblingAfter(id);
+	    	triggered = true;
+
+	    } else if(e.keyCode === KEYS.UP) {
+	    	Data.moveCursorUp(id);
+	    	triggered = true;
+
+	    } else if(e.keyCode === KEYS.DOWN) {
+	    	Data.moveCursorDown(id);
 	    	triggered = true;
 	    }
 
@@ -136,6 +147,7 @@ class TreeChildren extends Component {
 
 		var className = "show";
 		if(this.props.status === "close") className = "hide";
+		if(this.props.root === "1") className+= " root";
 
 		if(items) return (
 			<ul className={className}>
@@ -169,7 +181,7 @@ class Tree extends Component {
 		return (
 			<div>
 				<input ref={(input) => { this.name = input; }} onChange={this.setTreeName} type="text" className="tree-name" defaultValue={this.state.name} /><br />
-				<TreeChildren nodes={this.props.tree} />
+				<TreeChildren nodes={this.props.tree} root="1" />
 			</div>
 		);
 	}

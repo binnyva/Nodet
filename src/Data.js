@@ -3,6 +3,7 @@ var Data = {
 	tree_id: 0,
 	tree_name: "",
 	new_node_id: false,
+	focus_on_node_id: false, // Used for moving the cursor
 
 	load(data, tree_id = 0, tree_name = "") {
 		this.tree = {
@@ -204,12 +205,46 @@ var Data = {
 		else // Root level
 			node = parent[index_to_copy];
 
-		console.log(parent, index_to_copy, node);
-
 		var node_copy = {"id": node.id, "title": node.title};
 		if(typeof node.children !== "undefined") node_copy.children = node.children;
 
 		return node_copy;
+	},
+
+	flattenTree(data, flat) {
+		if(typeof flat === "undefined") flat = [];
+
+		for(var i in data) {
+			if(data[i]['id']) 
+				flat.push(data[i]['id']);
+
+			if(data[i]['children']) 
+				this.flattenTree(data[i]['children'], flat); // I think this works because closure. Or pass by refference. Not sure how this function writes to flat otherwise.
+		}
+
+		return flat;
+	},
+
+	moveCursorUp(id) {
+		this.moveCursor(id, -1);
+	},
+	
+	moveCursorDown(id) {
+		this.moveCursor(id, 1);
+	},
+
+	moveCursor(id, direction) {
+		var flat = this.flattenTree(this.get());
+		var location = flat.indexOf(id);
+
+		if(direction === -1 && location === 0) return false; // Top
+		if(direction === 1 && location === flat.length - 1) return false; // Bottom
+
+		var next_node_id = flat[location + direction];
+		var node = this.getNode(next_node_id);
+
+		this.focus_on_node_id = node.id;
+		return node.id;
 	},
 
 	getNode(id) {
@@ -224,7 +259,6 @@ var Data = {
 		var data = this.get();
 
 		var node = this.findNode(data, id);
-		console.log("getParentNode", id, node, data);
 		if(!node) return false;
 		var parent = node.slice(0,-2);
 
