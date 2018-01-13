@@ -112,8 +112,6 @@ var Data = {
 		var new_id = this.getUniqueId();
 		var new_node = {"id": new_id, "title": ""}; // Add a new node 
 
-		console.log("AddSiblingAfter", parent, id, node_path, node_index);
-
 		if(parent.children)
 			parent.children.splice(node_index + 1, 0, new_node);
 		else // We are at the root.

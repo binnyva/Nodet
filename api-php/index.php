@@ -19,12 +19,12 @@ $api = new API;
 $api->post('/trees/', function() {
 	global $trees_collection;
 
-	$post_data = file_get_contents("php://input");
-	$data = json_decode($post_data);
+	$post_raw = file_get_contents("php://input");
+	$post = json_decode($post_raw);
 
 	$insert = $trees_collection->insertOne(array(
-		"data" => $data->tree,
-		"name" =>  $data->tree_name
+		"data" => $post->data->data,
+		"name" => $post->tree_name
 	));
 	$id = $insert->getInsertedId();
 

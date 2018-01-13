@@ -40,3 +40,12 @@ This project is licensed under the BSD License.
 
 * [Bearings](https://github.com/theicfire/bearings)
 
+
+## Todo
+
+* Delete / Backspace Keys should delete empty nodes
+* Tree name editing shifts focus everytime there is a keypress
+* Text boxes become bigger as you type into it.
+* Clicking on new should refresh the tree.
+* Save should show some message.
+

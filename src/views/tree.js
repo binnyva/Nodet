@@ -18,19 +18,23 @@ export default class TreeView extends Component {
 	}
 
 	componentDidMount() {
-		if(this.state.tree_id === "0") { // Data is coming thru an import call.
+		if(this.state.tree_id === "0") { // New Tree
+			// Imported Data
+			let tree = Data.getNewTree();
+
+			this.setState({
+				name: Data.getTreeName(),
+				tree: tree
+			});
+
+		} else if(this.state.tree_id === "1") { // Import
 			// Imported Data
 			let tree = Data.getTree();
 
-			// New Tree
-			if(!tree) {
-				tree = Data.getNewTree();
-			}
-
 			this.setState({
-					name: Data.getTreeName(),
-					tree: tree
-				});
+				name: Data.getTreeName(),
+				tree: tree
+			});
 
 		} else { // Page called from Tree Index - get tree data from DB
 			// Get the list of all trees using API
@@ -82,9 +86,9 @@ export default class TreeView extends Component {
 			    return response.json();
 	      	}).then(function(response) {
 		      	if(response.success) {
-		      		console.log("Got it");
+		      		this.props.history.push("/tree/" + response.id['$oid']);
 		      	}
-		    });
+		    }.bind(this));
 	}
 
 	render() {
