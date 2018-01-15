@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import Tree from '../components/Tree.js';
 import Data from "../Data.js";
-// import json_data from '../data.json';
 
-export default class TreeView extends Component {
+class TreeView extends Component {
 	constructor(props) {
 		super(props);
 
@@ -15,6 +14,18 @@ export default class TreeView extends Component {
 		// The limitations of the ES6 syntax.
 	    this.refreshJson = this.refreshJson.bind(this);
 	    this.saveData = this.saveData.bind(this);
+	}
+
+	componentWillReceiveProps(nextProps){
+		if(nextProps.location.pathname === "/tree/0") {  // New Tree
+			// Imported Data
+			let tree = Data.getNewTree();
+
+			this.setState({
+				name: Data.getTreeName(),
+				tree: tree
+			});
+		}
 	}
 
 	componentDidMount() {
@@ -87,6 +98,7 @@ export default class TreeView extends Component {
 	      	}).then(function(response) {
 		      	if(response.success) {
 		      		this.props.history.push("/tree/" + response.id['$oid']);
+		      		this.props.alert.show('Data saved.');
 		      	}
 		    }.bind(this));
 	}
@@ -114,4 +126,5 @@ export default class TreeView extends Component {
 	    );
 	}
 } 
- 
+
+export default TreeView;

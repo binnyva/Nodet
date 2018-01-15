@@ -24,7 +24,7 @@ class Node extends Component {
 	    this.setOpenCloseIcon = this.setOpenCloseIcon.bind(this);
 	}
 
-	componentWillReceiveProps(nextProps){
+	componentWillReceiveProps(nextProps) {
 		if(nextProps.node.children) {
 			// eslint-disable-next-line
 			this.state.childCount = nextProps.node.children.length;
@@ -168,6 +168,13 @@ class Tree extends Component {
 		}
 
 		this.setTreeName = this.setTreeName.bind(this);
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if(nextProps.name === "Untitled") { // To get the Tree name updated when new tree is created.
+			this.setState({name: nextProps.name});
+			this.name.value = nextProps.name;
+		}
 	}
 
 	// :TODO: Set tree name automatically in the Data object too.
