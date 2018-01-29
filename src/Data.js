@@ -233,7 +233,8 @@ var Data = {
 		if(is_root) parent.splice(node_index, 1);
 		else parent.children.splice(node_index, 1);
 
-		this.focus_on_node_id = previous_sibiling.id;
+		if(previous_sibiling) this.focus_on_node_id = previous_sibiling.id;
+		else this.focus_on_node_id = parent[0].id;
 
 		this.changed = true;
 

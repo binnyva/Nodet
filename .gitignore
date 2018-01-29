@@ -19,3 +19,16 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+Clones/
+Nodet.sublime-workspace
+Samples/
+Temp/
+api-php/vendor/
+bearings/
+db/dump/ActiveX/
+db/dump/habitrpg/
+dist/
+src/Deleted/
+webpack.config.js

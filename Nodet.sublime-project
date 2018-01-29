@@ -1,0 +1,15 @@
+{
+	"folders":
+	[
+		{
+			"path": "public"
+		},
+		{
+			"path": "src"
+		},
+		{
+			"path": "api-php",
+			"folder_exclude_patterns": ["vendor"]
+		}
+	]
+}
