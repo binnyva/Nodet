@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Tree from '../components/Tree.js';
 import Data from "../Data.js";
+import { AlertList } from "react-bs-notifier";
 
 class TreeView extends Component {
 	constructor(props) {
@@ -8,7 +9,8 @@ class TreeView extends Component {
 
 		this.state = {
 			show_json: false,
-			tree_id: props.match.params.id
+			tree_id: props.match.params.id,
+			alerts: []
 		}
 
 		// The limitations of the ES6 syntax.
@@ -87,20 +89,72 @@ class TreeView extends Component {
 			"tree_name": Data.tree_name
 		};
 
-		fetch('http://localhost/Projects/Nodet/api-php/trees', {
-				method: 'POST',
-				body: JSON.stringify(body, replacer)
-			}).then(function(response) {
-	      		if (response.status >= 400) {
-			       throw new Error("Bad response from server");
-			    }
-			    return response.json();
-	      	}).then(function(response) {
-		      	if(response.success) {
-		      		this.props.history.push("/tree/" + response.id['$oid']);
-		      		this.props.alert.show('Data saved.');
-		      	}
-		    }.bind(this));
+		console.log(this.state.tree_id, Data.getTreeId());
+
+		if(this.state.tree_id === Data.getTreeId()) { // Tree existing in database. Update only.
+			fetch('http://localhost/Projects/Nodet/api-php/trees/' + this.state.tree_id, {
+					method: 'POST',
+					body: JSON.stringify(body, replacer)
+				}).then(function(response) {
+		      		if (response.status >= 400) {
+				       throw new Error("Bad response from server");
+				    }
+				    return response.json();
+		      	}).then(function(response) {
+			      	if(response.success) {
+			      		const new_alert = {
+							id: (new Date()).getTime(),
+							type: "success",
+							headline: "Data Saved",
+							message: "Tree Updated successfully."
+						};
+
+						this.setState({
+							alerts: [...this.state.alerts, new_alert]
+						});
+			      	}
+			    }.bind(this));
+
+		} else { // New tree - insert.
+			fetch('http://localhost/Projects/Nodet/api-php/trees', {
+					method: 'POST',
+					body: JSON.stringify(body, replacer)
+				}).then(function(response) {
+		      		if (response.status >= 400) {
+				       throw new Error("Bad response from server");
+				    }
+				    return response.json();
+		      	}).then(function(response) {
+			      	if(response.success) {
+			      		this.props.history.push("/tree/" + response.id['$oid']);
+			      		// this.props.alert.show('Data saved.');
+			      		const new_alert = {
+							id: (new Date()).getTime(),
+							type: "success",
+							headline: "Data Saved",
+							message: "New tree was saved to the database successfully."
+						};
+
+						this.setState({
+							alerts: [...this.state.alerts, new_alert]
+						});
+			      	}
+			    }.bind(this));
+		}
+	}
+
+	onAlertDismissed(alert) {
+		const alerts = this.state.alerts;
+
+		// find the index of the alert that was dismissed
+		const idx = alerts.indexOf(alert);
+
+		if (idx >= 0) {
+			this.setState({
+				// remove the alert from the array
+				alerts: [...alerts.slice(0, idx), ...alerts.slice(idx + 1)]
+			});
+		}
 	}
 
 	render() {
@@ -112,16 +166,26 @@ class TreeView extends Component {
 		var json = Data.getAsString();
 
 	    return (
-	      <div className="App">
-	        <Tree tree={data} name={this.state.name} />
+	    	<div>
+      		<AlertList
+				position="top-right"
+				alerts={this.state.alerts}
+				timeout={2000}
+				dismissTitle="Close!"
+				onDismiss={this.onAlertDismissed.bind(this)}
+			/>
 
-	        <input type="button" onClick={this.saveData}  className="btn btn-success" value="Save" />
+		    <div className="App">
+		        <Tree tree={data} name={this.state.name} />
 
-	        <div className={this.state.show_json ? "show" : "hide"} >
-		        <textarea rows="10" cols="70" ref={(input) => { this.textArea = input }} defaultValue={json}></textarea><br />
-		        <input type="button" onClick={this.refreshJson} value="Refresh" />
-	        </div>
-	        <input type="button" onClick={() => this.setState({"show_json": this.state.show_json ? false : true})}  className={this.state.show_json ? "hide" : "show"} value="Show Data" />
+		        <input type="button" onClick={this.saveData}  className="btn btn-success" value="Save" />
+
+		        <div className={this.state.show_json ? "show" : "hide"} >
+			        <textarea rows="10" cols="70" ref={(input) => { this.textArea = input }} defaultValue={json}></textarea><br />
+			        <input type="button" onClick={this.refreshJson} value="Refresh" />
+		        </div>
+		        <input type="button" onClick={() => this.setState({"show_json": this.state.show_json ? false : true})}  className={this.state.show_json ? "hide" : "show"} value="Show Data" />
+		    </div>
 	      </div>
 	    );
 	}

@@ -16,7 +16,34 @@ header("Content-Type: application/json");
 
 $api = new API;
 
-$api->post('/trees/', function() {
+$api->get('/trees/{tree_id}', function($tree_id_str) use ($trees_collection) {
+	$tree_id = new MongoDB\BSON\ObjectId($tree_id_str);
+	$document = $trees_collection->findOne(array("_id" => $tree_id));
+
+	$tree = array(
+		'name'	=> $document->name,
+		'id'	=> $tree_id_str,
+		'data'	=> $document->data
+	);
+
+	showSuccess(array('data' => $tree));
+});
+
+$api->post('/trees/{tree_id}', function($tree_id_str) use ($trees_collection) {
+	$tree_id = new MongoDB\BSON\ObjectId($tree_id_str);
+	$post_raw = file_get_contents("php://input");
+	$post = json_decode($post_raw);
+
+	$tree = array(
+		"data" => $post->data->data,
+		"name" => $post->tree_name
+	);
+	$trees_collection->updateOne(["_id" => $tree_id], ['$set' => $tree]);
+
+	showSuccess(array('data' => $tree));
+});
+
+$api->post('/trees', function() {
 	global $trees_collection;
 
 	$post_raw = file_get_contents("php://input");
@@ -43,13 +70,6 @@ $api->get('/trees', function() use ($trees_collection) {
 			'id'	=> $id->__toString(),
 			'data'	=> false
 		);
-		// $i = 0;
-		// while(1) {
-		// 	if(isset($document->$i)) 
-		// 		$tree['data'][] = $document->$i;
-		// 	else break;
-		// 	$i++;
-		// }
 
 		$all_trees[] = $tree;
 	}
@@ -57,18 +77,6 @@ $api->get('/trees', function() use ($trees_collection) {
 	showSuccess(array('data' => $all_trees));
 });
 
-$api->get('/trees/{tree_id}', function($tree_id_str) use ($trees_collection) {
-	$tree_id = new MongoDB\BSON\ObjectId($tree_id_str);
-	$document = $trees_collection->findOne(array("_id" => $tree_id));
-
-	$tree = array(
-		'name'	=> $document->name,
-		'id'	=> $tree_id_str,
-		'data'	=> $document->data
-	);
-
-	showSuccess(array('data' => $tree));
-});
 
 $api->notFound(function() {
 	http_response_code(404);

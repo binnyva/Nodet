@@ -6,6 +6,7 @@
     "bootstrap": "^3.3.7",
     "history": "^1.17.0",
     "react": "^16.0.0",
+    "react-bs-notifier": "^4.4.6",
     "react-dom": "^16.0.0",
     "react-fetch": "0.0.9",
     "react-router": "^4.2.0",

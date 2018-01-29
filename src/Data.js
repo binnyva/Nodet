@@ -16,7 +16,8 @@ var Data = {
 	},
 
 	loadTree(tree) {
-		this.load(tree.data, tree._id, tree.name);
+		let id = tree._id || tree.id;
+		this.load(tree.data, id, tree.name);
 	},
 
 	get() {
