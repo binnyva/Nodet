@@ -19,7 +19,7 @@ class TreeView extends Component {
 	}
 
 	componentWillReceiveProps(nextProps){
-		if(nextProps.location.pathname === "/tree/0") {  // New Tree
+		if(nextProps.location.pathname === "/tree/0" && this.props.location.pathname !== "/tree/0") {  // New Tree - :TODO: This wont let you create a new tree when you are already in a new tree 
 			// Imported Data
 			let tree = Data.getNewTree();
 
@@ -89,8 +89,6 @@ class TreeView extends Component {
 			"tree_name": Data.tree_name
 		};
 
-		console.log(this.state.tree_id, Data.getTreeId());
-
 		if(this.state.tree_id === Data.getTreeId()) { // Tree existing in database. Update only.
 			fetch('http://localhost/Projects/Nodet/api-php/trees/' + this.state.tree_id, {
 					method: 'POST',
@@ -102,6 +100,7 @@ class TreeView extends Component {
 				    return response.json();
 		      	}).then(function(response) {
 			      	if(response.success) {
+			      		Data.changed = false;
 			      		const new_alert = {
 							id: (new Date()).getTime(),
 							type: "success",
@@ -126,8 +125,8 @@ class TreeView extends Component {
 				    return response.json();
 		      	}).then(function(response) {
 			      	if(response.success) {
+			      		Data.changed = false;
 			      		this.props.history.push("/tree/" + response.id['$oid']);
-			      		// this.props.alert.show('Data saved.');
 			      		const new_alert = {
 							id: (new Date()).getTime(),
 							type: "success",

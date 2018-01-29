@@ -1,5 +1,6 @@
 var Data = {
 	tree: false,
+	changed: false,
 	tree_id: 0,
 	tree_name: "",
 	new_node_id: false,
@@ -18,6 +19,7 @@ var Data = {
 	loadTree(tree) {
 		let id = tree._id || tree.id;
 		this.load(tree.data, id, tree.name);
+		this.changed = true;
 	},
 
 	get() {
@@ -118,6 +120,8 @@ var Data = {
 		else // We are at the root.
 			parent.push(new_node);
 
+		this.changed = true;
+
 		return new_id;
 	},
 
@@ -133,6 +137,8 @@ var Data = {
 			var new_array = {"id": new_id, "title": ""};
 			reference['children'].push(new_array);
 		}
+
+		this.changed = true;
 
 		return new_id;
 	},
@@ -167,6 +173,8 @@ var Data = {
 			parent.splice(node_index, 1); // Delete the node from the old position.
 		}
 
+		this.changed = true;
+
 		return id;
 	},
 
@@ -195,6 +203,41 @@ var Data = {
 			grandparent['children'].splice(parent_node_index+1, 0, node_copy); // Add the node to the grandparent.
 		else // Root level
 			grandparent.push(node_copy);
+
+		this.changed = true;
+	},
+
+	deleteNode(id) {
+		var node = this.getNode(id);
+		if(node.title) return false; // There is content in node - don't delete.
+
+		var node_path = this.findNode(this.get(), id);
+		var parent = this.getParentNode(id);
+		var node_index = Number(node_path[node_path.length - 1]);
+		var is_root = (typeof parent.children === "undefined");
+
+		var previous_sibiling = false;
+		if(is_root) previous_sibiling = parent[node_index - 1];
+		else previous_sibiling = parent.children[node_index - 1];
+
+		var has_children = false;
+		if(node.children) has_children = node.children.length;
+
+		if(has_children) {
+			if(previous_sibiling.children.length) {
+				previous_sibiling.children.concat(node.children);
+			} else {
+				previous_sibiling.children = node.children;
+			}
+		}
+		if(is_root) parent.splice(node_index, 1);
+		else parent.children.splice(node_index, 1);
+
+		this.focus_on_node_id = previous_sibiling.id;
+
+		this.changed = true;
+
+		return true;
 	},
 
 	getChildCopy(parent, index_to_copy) {
@@ -269,6 +312,8 @@ var Data = {
 
 	updateNode(id, value) {
 		var reference = this.getNode(id);
+
+		this.changed = true;
 
 		// Update the value
 		reference.title = value;

@@ -82,6 +82,7 @@ class Node extends Component {
 	        ENTER: 13,
 	        TAB: 9,
 	        BACKSPACE: 8,
+	        DELETE: 46,
 	        Z: 90,
 	        Y: 89,
 	        S: 83,
@@ -117,6 +118,9 @@ class Node extends Component {
 	    } else if(e.keyCode === KEYS.DOWN) {
 	    	Data.moveCursorDown(id);
 	    	triggered = true;
+	    
+	    } else if(e.keyCode === KEYS.BACKSPACE || e.keyCode === KEYS.DELETE) {
+	    	triggered = Data.deleteNode(id);
 	    }
 
 	    if(triggered) {
