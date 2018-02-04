@@ -10,6 +10,13 @@ export default class IndexView extends Component {
 		};
 	}
 
+	// shouldComponentUpdate(props) {
+	// 	// const QueryString = require('query-string');
+	// 	// const parsed = QueryString.parse(props.location.search);
+	// 	// if()
+	// 	return true;
+	// }
+
 	componentDidMount() {
 		// Get the list of all trees using API
 	    fetch('http://localhost/Projects/Nodet/api-php/trees/')
@@ -22,7 +29,7 @@ export default class IndexView extends Component {
 		      	const trees = response.data;
 		        this.setState({ trees: trees });
 		    }.bind(this));
-	  }
+	}
 
 	render() {
 		return (

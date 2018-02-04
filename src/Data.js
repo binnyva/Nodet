@@ -51,7 +51,8 @@ var Data = {
 		this.load([{
 					"id": this.getUniqueId(),
 					"title": "Untitled",
-					"children": []
+					"children": [],
+					"status": 1
 				}], 0, "Untitled");
 
 		return this.getTree();

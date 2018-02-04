@@ -11,8 +11,8 @@ $trees_collection = $db->Tree;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
-// header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Access-Control-Allow-Origin');
-// header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
+header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Access-Control-Allow-Origin');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
 
 $api = new API;
 
@@ -43,6 +43,17 @@ $api->post('/trees/{tree_id}', function($tree_id_str) use ($trees_collection) {
 	showSuccess(array('data' => $tree));
 });
 
+$api->delete('/trees/{tree_id}', function($tree_id_str) use ($trees_collection) {
+	$tree_id = new MongoDB\BSON\ObjectId($tree_id_str);
+
+	$trees_collection->updateOne(["_id" => $tree_id], ['$set' => ['status' => 0]]);
+
+	showSuccess(array('id' => $tree_id_str));
+});
+$api->call('OPTIONS', '/trees/{tree_id}', function($tree_id_str) use ($trees_collection) { // Need this - or delete wont work. Pre-flight check.
+	showSuccess(['data' => 'true']);
+});
+
 $api->post('/trees', function() {
 	global $trees_collection;
 
@@ -60,7 +71,7 @@ $api->post('/trees', function() {
 });
 
 $api->get('/trees', function() use ($trees_collection) {
-	$cursor = $trees_collection->find();
+	$cursor = $trees_collection->find(['status' => 1]);
 
 	$all_trees = array();
 	foreach ($cursor as $document) {
@@ -79,7 +90,7 @@ $api->get('/trees', function() use ($trees_collection) {
 
 
 $api->notFound(function() {
-	http_response_code(404);
+	// http_response_code(404);
 	print "404";
 });
 

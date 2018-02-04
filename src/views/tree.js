@@ -16,6 +16,7 @@ class TreeView extends Component {
 		// The limitations of the ES6 syntax.
 	    this.refreshJson = this.refreshJson.bind(this);
 	    this.saveData = this.saveData.bind(this);
+	    this.deleteTree = this.deleteTree.bind(this);
 	}
 
 	componentWillReceiveProps(nextProps){
@@ -71,6 +72,34 @@ class TreeView extends Component {
 
 	refreshJson() {
 		this.textArea.value = Data.getAsString();
+	}
+
+	deleteTree() {
+		if(this.state.tree_id === Data.getTreeId()) { // Tree existing in database. Update only.
+			fetch('http://localhost/Projects/Nodet/api-php/trees/' + this.state.tree_id, {
+					method: 'DELETE'
+				}).then(function(response) {
+		      		if (response.status >= 400) {
+				       throw new Error("Bad response from server");
+				    }
+				    return response.json();
+		      	}).then(function(response) {
+			            //if(response.success) {
+			            // const new_alert = {
+						// 	id: (new Date()).getTime(),
+						// 	type: "success",
+						// 	headline: "Deleted",
+						// 	message: "Tree Deleted successfully."
+						// };
+
+						// this.setState({
+						// 	alerts: [...this.state.alerts, new_alert]
+						// });
+			    }); //.bind(this));
+		}
+
+		// Go to front page.
+		this.props.history.push("/?action=tree_deleted");
 	}
 
 	saveData() {
@@ -177,7 +206,9 @@ class TreeView extends Component {
 		    <div className="App">
 		        <Tree tree={data} name={this.state.name} />
 
-		        <input type="button" onClick={this.saveData}  className="btn btn-success" value="Save" />
+		        <input type="button" onClick={this.saveData}  className="btn btn-success" value="Save" /><br />
+
+		        <input type='button' onClick={this.deleteTree} className="btn btn-danger btn-xs" value="Delete" />
 
 		        <div className={this.state.show_json ? "show" : "hide"} >
 			        <textarea rows="10" cols="70" ref={(input) => { this.textArea = input }} defaultValue={json}></textarea><br />
